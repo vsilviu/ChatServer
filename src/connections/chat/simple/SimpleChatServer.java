@@ -17,6 +17,7 @@ public class SimpleChatServer {
 
     private List clientOutputStreams; //has writers for each client connection established
 
+    //worker class which intercepts all client messages
     public class ClientHandler implements Runnable { //manages logic of connection for each connected client
 
         private BufferedReader reader; //reads messages sent by client
@@ -82,6 +83,7 @@ public class SimpleChatServer {
     }
 
     public static void main(String[] args) {
+        //set up a connection list, start the server, wait for client connections, persist connections in threads
         new SimpleChatServer().go();
     }
 

@@ -13,6 +13,8 @@ import java.net.Socket;
 /**
  * Created by Silviu on 13-Sep-15.
  */
+//I can run this as many times as I want
+//Each run will generate a new, individual JFrame, connected to the same server
 public class SimpleChatClientA {
 
     private JTextArea incoming;
@@ -45,7 +47,8 @@ public class SimpleChatClientA {
 
         setUpNetworking();
 
-        Thread readerThread = new Thread(new IncomingReader()); //after server connection was established, persist this connection in a thread
+        //persist the connection in a thread; let the run method catch all events from the server (i.e. sent messages)
+        Thread readerThread = new Thread(new IncomingReader());
         //this thread will read messages from the server and show them in the incoming area
         readerThread.start();
 
@@ -54,6 +57,7 @@ public class SimpleChatClientA {
         frame.setVisible(true);
     }
 
+    //starts a connection with the server
     public void setUpNetworking() throws IOException {
         //will send messages to server
         Socket sock = new Socket("localhost", 5001);
@@ -63,6 +67,7 @@ public class SimpleChatClientA {
         System.out.println("Connection established client side!");
     }
 
+    //listener which sends messages to server
     public class SendButtonListener implements ActionListener {
 
         //gets text input from applet, gives it to printer.
@@ -76,6 +81,7 @@ public class SimpleChatClientA {
         }
     }
 
+    //worker class which reads server messages and updates its screen's text
     public class IncomingReader implements Runnable {
 
         @Override
@@ -85,7 +91,6 @@ public class SimpleChatClientA {
                 while (message != null) { //when server has messages, read them
                     System.out.println("Read " + message);
                     incoming.append(message + "\n"); //put them in incoming area
-                    frame.repaint();
                     message = reader.readLine();
                 }
             } catch (IOException e) {
@@ -96,7 +101,8 @@ public class SimpleChatClientA {
 
     public static void main(String[] args) {
         try {
-            new SimpleChatClientA().go(); //wow, is valid.
+            //builds the window and a new thread for each run of main
+            new SimpleChatClientA().go();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
