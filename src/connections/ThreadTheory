@@ -1,0 +1,32 @@
+Threads
+    Au propriul call stack.
+    O aplicatie normala ruleaza pe un thread care pune metoda main() la baza stack call-ului
+    JVM ul porneste thread-ul default si gestioneaza celelalte threaduri (i.e. garbage collection thread)
+    metode basic Thread: run, join, sleep
+    mai mult de un call stack: mai multe lucruri simultan
+    main in threadul default = run in threadul custom (puse la baza stack call)
+    lansare thread nou: runnable oject (thread job), thread object(worker) with job, start()
+    numai un thread are un call stack activ in state ul running (pe masinile cu un singur procesor!!!)
+    4 state uri pt un thread: runnable (new call stack initialized), running call stack becomes active si temporarily not runnable/blocked, dead (finished run())
+    in mod normal, runnable si running alterneaza: selected to run by JVM = running, deselected = runnable
+    motive pt blocking: citire input, acces pe obiecte blocate
+    manager direct threading: Thread Scheduler (has no API)
+        functioneaza diferit in fct de masina
+        o metoda de control scheduling: sleep(time). un thread nu poate deveni running in perioada time.
+    pot subclasa Thread si sa implementez run(), dar nu e OO-wise, daca vreau sa am un job pt worker
+    nu se poate refolosi un obiect thread. poate persista pe heap, totusi. exista design patterns cu pool of threads care permt asta
+    thread = separate thread of execution
+    Thread = clasa
+    Thread.sleep(2000) ----> sleep for 2 seconds, poate arunca InterruptedException
+    cand se trezeste, intra in state ul runnable
+    pt a face o metoda comuna mai multor threaduri atomica, folosesc synchronized
+    avantaj: atomicitate. dezavantaj: performance hit, speed reduction(pending threads for method), deadlock(tbr)
+    principiu functionare sync: chei. threadul activ pastreasa key, la terminarea executiei, elibereaza key
+    key se pastreaza chiar daca threadul devine runnable! alte threaduri running nu pot accesa metoda blocata.
+    deadlock:
+        consecinte: threadurile asteapta mult timp accesul la resursa
+    java nu stie sa menajeze deadlock tehnic
+        scenariu: thread a acceseaza metoda sincronizata din obiectul foo, ia cheia, sleep
+                  thread b acceseaza metoda sincronizata din obiectul bar, ia cheia, incearca acces pe metoda sync din foo, nu poate, sleep
+                  thread a se trezeste, incearca acces pe metoda sync din obiectul bar, nu poate, sleep
+                  etc
